@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Product } from "@/types";
-import { useCartStore } from "@/store/cart";
+import { useCartStore, type CartStore } from "@/store/cart";
 
 interface ModalProps {
   product: Product | null;
@@ -11,11 +11,11 @@ interface ModalProps {
 }
 
 export default function Modal({ product, onClose }: ModalProps) {
-  const addItem = useCartStore((s) => s.addItem);
+  const addItem = useCartStore((s: CartStore) => s.addItem);
 
   if (!product) return null;
 
-  const isUnavailable = product.statut === "Indisponible";
+  const isUnavailable = product.statut === "Sold Out";
 
   return (
     <AnimatePresence>
@@ -48,10 +48,10 @@ export default function Modal({ product, onClose }: ModalProps) {
             <div className="flex flex-col md:flex-row">
               {/* Image */}
               <div className="relative w-full md:w-1/2 aspect-square bg-gray-100">
-                {product.photo ? (
+                {product.photos?.[0] ? (
                   <Image
-                    src={product.photo}
-                    alt={product.nom}
+                    src={product.photos[0]}
+                    alt={product.name}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover"
@@ -78,7 +78,7 @@ export default function Modal({ product, onClose }: ModalProps) {
                     {product.categorie}
                   </span>
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                    {product.nom}
+                    {product.name}
                   </h2>
                   <div className="flex items-baseline gap-2 mb-4">
                     <span className="text-3xl font-bold text-emerald-900">
